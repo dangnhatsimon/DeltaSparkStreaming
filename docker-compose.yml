@@ -5,10 +5,12 @@ x-spark-common: &spark-common
       context: .
       dockerfile: ./Dockerfile
   volumes:
+    - ./config:/opt/bitnami/spark/config
     - ./jobs:/opt/bitnami/spark/jobs
     - ./datasets:/opt/bitnami/spark/datasets
+    - ./requirements.txt:/requirements.txt
   networks:
-      - spark-network
+      - delta-spark-network
 
 services:
   spark-master:
@@ -55,5 +57,5 @@ services:
       SPARK_SSL_ENABLED: no
 
 networks:
-  spark-network:
+  delta-spark-network:
     driver: bridge
