@@ -3,9 +3,6 @@ FROM bitnami/spark:latest
 # Set the working directory
 WORKDIR /opt/bitnami/spark
 
-# Optional: custom logging
-COPY log4j2.properties /opt/bitnami/spark/conf/log4j2.properties
-
 # Copy the Python requirements file
 COPY requirements.txt ./requirements.txt
 
