@@ -1,19 +1,17 @@
 version: '3'
 
-
 x-spark-common: &spark-common
   build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./spark/Dockerfile
   volumes:
-    - ./config:/opt/bitnami/spark/conf
-    - ./jobs:/opt/bitnami/spark/jobs
+    - ./spark/config:/opt/bitnami/spark/conf
+    - ./spark/jobs:/opt/bitnami/spark/jobs
     - ./datasets:/opt/bitnami/spark/datasets
     - ./requirements.txt:/requirements.txt
-    - ./spark-events:/opt/bitnami/spark/spark-events
+    - ./spark/spark-events:/opt/bitnami/spark/spark-events
   networks:
       - delta-spark-network
-
 
 x-spark-worker: &worker
   <<: *spark-common
@@ -71,6 +69,25 @@ services:
     ports:
       - "8082:8081"
 
+  spark-jupyter:
+    build:
+      context: .
+      dockerfile: ./jupyter/Dockerfile
+    container_name: deltaspark-jupyter
+    environment:
+      - JUPYTER_ENABLE_LAB="yes"
+      - GRANT_SUDO="yes"
+    restart: always
+    volumes:
+      - ./jupyter/notebooks:/home/jovyan/work
+      - ./jupyter/config:/usr/local/spark/conf
+      - ./datasets:/home/jovyan/datasets
+      - ./requirements.txt:/requirements.txt
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    networks:
+      - delta-spark-network
 networks:
   delta-spark-network:
     driver: bridge
