@@ -53,7 +53,7 @@ services:
   spark-worker-2:
     container_name: delta-streaming-spark-worker-2
     <<: *spark-common
-    entrypoint: ./entrypoint.sh --workload worker --master-host delta-streaming-spark-master --master-port 7077 --worker-cores 4 --worker-memory 2g --worker-webui-port 8082
+    entrypoint: ./entrypoint.sh --workload worker --master-host delta-streaming-spark-master --master-port 7077 --worker-cores 4 --worker-memory 2g --worker-webui-port 8081
     depends_on:
       - spark-master
     ports:
@@ -62,7 +62,7 @@ services:
   spark-worker-3:
     container_name: delta-streaming-spark-worker-3
     <<: *spark-common
-    entrypoint: ./entrypoint.sh --workload worker --master-host delta-streaming-spark-master --master-port 7077 --worker-cores 4 --worker-memory 2g --worker-webui-port 8083
+    entrypoint: ./entrypoint.sh --workload worker --master-host delta-streaming-spark-master --master-port 7077 --worker-cores 4 --worker-memory 2g --worker-webui-port 8081
     depends_on:
       - spark-master
     ports:
