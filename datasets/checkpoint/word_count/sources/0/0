@@ -1,0 +1,4 @@
+v1
+{"path":"file:///opt/spark/datasets/text/text_data_1.txt","timestamp":1747445100000,"batchId":0}
+{"path":"file:///opt/spark/datasets/text/text_data_2.txt","timestamp":1747445100000,"batchId":0}
+{"path":"file:///opt/spark/datasets/text/text_data_3.txt","timestamp":1747445100000,"batchId":0}

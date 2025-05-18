@@ -1,0 +1,5 @@
+v1
+{"path":"file:///opt/spark/datasets/invoices/invoices-1.json","timestamp":1747445100000,"batchId":0}
+{"path":"file:///opt/spark/datasets/invoices/invoices-2.json","timestamp":1747445100000,"batchId":0}
+{"path":"file:///opt/spark/datasets/invoices/invoices-3.json","timestamp":1747445100000,"batchId":0}
+{"path":"file:///opt/spark/datasets/invoices/invoices-4.json","timestamp":1747445100000,"batchId":0}
