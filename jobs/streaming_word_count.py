@@ -132,15 +132,12 @@ class StreamWordCount:
 
 
 if __name__ == "__main__":
-    table_name = "word_count_table"
     spark = (
         SparkSession.builder
-        .appName("streaming_word_count")
+        .appName("batching_word_count")
         .enableHiveSupport()
         .getOrCreate()
     )
-    # if Path(warehouse_location).exists() and Path(warehouse_location).is_dir():
-    #     shutil.rmtree(Path(warehouse_location))
     batch = BatchWordCount(spark)
     raw_sdf = batch.read_text(path="/opt/spark/datasets/text/*.txt")
     processed_sdf = batch.process_text(raw_sdf)
@@ -149,10 +146,16 @@ if __name__ == "__main__":
         sdf,
         format="delta",
         mode="overwrite",
-        table_name=table_name
+        table_name="batching_word_count_table"
     )
-    spark.read.table(table_name).show()
+    spark.read.table("batching_word_count_table").show()
 
+    spark = (
+        SparkSession.builder
+        .appName("streaming_word_count")
+        .enableHiveSupport()
+        .getOrCreate()
+    )
     stream = StreamWordCount(spark)
     raw_sdf = stream.read_text(path="/opt/spark/datasets/text/*.txt")
     processed_sdf = stream.process_text(raw_sdf)
@@ -161,9 +164,9 @@ if __name__ == "__main__":
         sdf,
         format="delta",
         output_mode="complete",
-        table_name=table_name,
+        table_name="streaming_word_count_table",
         checkpoint_location="/opt/spark/datasets/checkpoint/word_count"
     )
-    spark.read.table(table_name).show()
+    spark.read.table("streaming_word_count_table").show()
 
 # docker exec -it delta-streaming-spark-master-1 spark-submit --master spark://172.19.0.2:7077 --packages io.delta:delta-spark_2.13:3.3.0,org.apache.spark:spark-sql_2.12:3.5.3 --deploy-mode client /opt/spark/jobs/streaming_word_count.py

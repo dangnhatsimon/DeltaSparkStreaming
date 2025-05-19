@@ -23,7 +23,7 @@ ENV SPARK_HOME=${SPARK_HOME:-"/opt/spark"}
 ENV HADOOP_HOME=${HADOOP_HOME:-"/opt/hadoop"}
 
 ENV SPARK_MASTER_PORT=7077
-ENV SPARK_MASTER_HOST=spark-master
+ENV SPARK_MASTER_HOST=delta-streaming-spark-master
 ENV SPARK_MASTER="spark://$SPARK_MASTER_HOST:$SPARK_MASTER_PORT"
 
 ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
@@ -74,8 +74,8 @@ RUN curl https://repo1.maven.org/maven2/org/apache/hudi/hudi-spark3-bundle_2.12/
 
 RUN curl https://repo1.maven.org/maven2/software/amazon/awssdk/s3/2.31.16/s3-2.31.16.jar -Lo /opt/spark/jars/s3-2.31.16.jar \
     && curl https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.12.782/aws-java-sdk-1.12.782.jar -Lo /opt/spark/jars/aws-java-sdk-1.12.782.jar \
-    && curl https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.1/hadoop-aws-3.4.1.jar -Lo /opt/spark/jars/hadoop-aws-3.4.1.jar \
-    && curl https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/3.4.1/hadoop-common-3.4.1.jar -Lo /opt/spark/jars/hadoop-common-3.4.1.jar \
+    && curl https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.6/hadoop-aws-3.3.6.jar -Lo /opt/spark/jars/hadoop-aws-3.3.6.jar \
+    && curl https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/3.3.6/hadoop-common-3.3.6.jar -Lo /opt/spark/jars/hadoop-common-3.3.6.jar \
     && curl https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.31.45/bundle-2.31.45.jar -Lo /opt/spark/jars/bundle-2.31.45.jar \
     && curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.5.5/spark-sql-kafka-0-10_2.12-3.5.5.jar -Lo /opt/spark/jars/spark-sql-kafka-0-10_2.12-3.5.5.jar \
     && curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql_2.12/3.5.5/spark-sql_2.12-3.5.5.jar -Lo /opt/spark/jars/spark-sql_2.12-3.5.5.jar \
