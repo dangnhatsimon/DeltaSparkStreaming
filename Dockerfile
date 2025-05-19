@@ -62,7 +62,7 @@ RUN pip3 install -r requirements.txt
 FROM pyspark AS pyspark-runner
 
 # Download iceberg spark runtime
-RUN curl https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.4.3/iceberg-spark-runtime-3.4_2.12-1.4.3.jar -Lo /opt/spark/jars/iceberg-spark-runtime-3.4_2.12-1.4.3.jar
+RUN curl https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.9.0/iceberg-spark-runtime-3.5_2.12-1.9.0.jar -Lo /opt/spark/jars/iceberg-spark-runtime-3.5_2.12-1.9.0.jar
 
 # Download delta jars
 RUN curl https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.4.0/delta-core_2.12-2.4.0.jar -Lo /opt/spark/jars/delta-core_2.12-2.4.0.jar
@@ -74,8 +74,9 @@ RUN curl https://repo1.maven.org/maven2/org/apache/hudi/hudi-spark3-bundle_2.12/
 
 RUN curl https://repo1.maven.org/maven2/software/amazon/awssdk/s3/2.31.16/s3-2.31.16.jar -Lo /opt/spark/jars/s3-2.31.16.jar \
     && curl https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.12.782/aws-java-sdk-1.12.782.jar -Lo /opt/spark/jars/aws-java-sdk-1.12.782.jar \
-    && curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.13/3.5.3/spark-sql-kafka-0-10_2.13-3.5.3.jar -Lo /opt/spark/jars/spark-sql-kafka-0-10_2.13-3.5.3.jar \
-    && curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql_2.13/3.5.3/spark-sql_2.13-3.5.3.jar -Lo /opt/spark/jars/spark-sql_2.13-3.5.3.jar \
+    && curl https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.1/hadoop-aws-3.4.1.jar -Lo /opt/spark/jars/hadoop-aws-3.4.1.jar \
+    && curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.5.5/spark-sql-kafka-0-10_2.12-3.5.5.jar -Lo /opt/spark/jars/spark-sql-kafka-0-10_2.12-3.5.5.jar \
+    && curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql_2.12/3.5.5/spark-sql_2.12-3.5.5.jar -Lo /opt/spark/jars/spark-sql_2.12-3.5.5.jar \
     && curl https://repo1.maven.org/maven2/io/openlineage/openlineage-spark_2.12/1.32.0/openlineage-spark_2.12-1.32.0.jar -Lo /opt/spark/jars/openlineage-spark_2.12-1.32.0.jar
 
 COPY entrypoint.sh .
