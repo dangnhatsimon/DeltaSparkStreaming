@@ -9,7 +9,9 @@ x-spark-common: &spark-common
     - ./jobs:/opt/spark/jobs
     - ./datasets:/opt/spark/datasets
     - ./spark-events:/opt/spark/spark-events
-    - ./warehouse:/opt/spark/warehouse
+    - ./spark-warehouse:/opt/spark/spark-warehouse
+    - ./spark-checkpoint:/opt/spark/spark-checkpoint
+    - ./spark-state:/opt/spark/spark-state
   env_file:
     - .env.spark
   networks:

@@ -1,4 +1,8 @@
 configuration = {
-    "AWS_ACCESS_KEY": "",
-    "AWS_SECRET_KEY": ""
+    "bootstrap.servers": "",
+    "security.protocol": "SASL_SSL",
+    "sasl.mechanism": "PLAIN",
+    "sasl.username": "",
+    "sasl.password": "",
+    "client.id": "do"
 }
