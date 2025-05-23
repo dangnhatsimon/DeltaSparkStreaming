@@ -5,7 +5,7 @@ x-spark-common: &spark-common
     context: .
     dockerfile: ./Dockerfile
   volumes:
-    - ./config:/opt/spark/conf
+    - ./spark-config:/opt/spark/conf
     - ./jobs:/opt/spark/jobs
     - ./datasets:/opt/spark/datasets
     - ./spark-events:/opt/spark/spark-events
@@ -71,7 +71,7 @@ services:
       - '8083:8081'
 
   controller-1:
-    image: apache/kafka:latest
+    image: apache/kafka:4.0.0
     container_name: controller-1
     environment:
       - KAFKA_NODE_ID=1
@@ -91,7 +91,7 @@ services:
       - controller_data_1:/var/lib/kafka/data
 
   controller-2:
-    image: apache/kafka:latest
+    image: apache/kafka:4.0.0
     container_name: controller-2
     environment:
       - KAFKA_NODE_ID=2
@@ -111,7 +111,7 @@ services:
       - controller_data_2:/var/lib/kafka/data
 
   broker-1:
-    image: apache/kafka:latest
+    image: apache/kafka:4.0.0
     container_name: broker-1
     depends_on:
       - controller-1
@@ -134,7 +134,7 @@ services:
       - delta-streaming
 
   broker-2:
-    image: apache/kafka:latest
+    image: apache/kafka:4.0.0
     container_name: broker-2
     depends_on:
       - controller-1

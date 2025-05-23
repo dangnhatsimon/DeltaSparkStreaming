@@ -1,4 +1,4 @@
-FROM python:3.12.9-bullseye AS spark-base
+FROM amazoncorretto:17 AS kafka-base
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -7,7 +7,6 @@ RUN apt-get update && \
       vim \
       unzip \
       rsync \
-      openjdk-17-jdk \
       build-essential \
       software-properties-common \
       ssh && \
@@ -17,41 +16,25 @@ RUN apt-get update && \
 ## Download spark and hadoop dependencies and install
 
 # ENV variables
-ENV SPARK_VERSION=3.5.5
-ENV SCALA_VERSION=2.12
+ENV KAFKA_VERSION=4.0.0
+ENV SCALA_VERSION=2.13
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV SPARK_HOME=${SPARK_HOME:-"/opt/spark"}
-ENV HADOOP_HOME=${HADOOP_HOME:-"/opt/hadoop"}
-
-ENV SPARK_MASTER_PORT=7077
-ENV SPARK_MASTER_HOST=delta-streaming-spark-master
-ENV SPARK_MASTER="spark://$SPARK_MASTER_HOST:$SPARK_MASTER_PORT"
-
-ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
-ENV PYSPARK_PYTHON=python3
-
-# Add iceberg spark runtime jar to IJava classpath
-ENV IJAVA_CLASSPATH=/opt/spark/jars/*
-
-RUN mkdir -p ${HADOOP_HOME} && mkdir -p ${SPARK_HOME}
-WORKDIR ${SPARK_HOME}
+ENV KAFKA_HOME=${KAFKA_HOME:-"/opt/kafka"}
 
 # Download spark
 # see resources: https://dlcdn.apache.org/spark/spark-3.5.5/
 # filename: spark-3.5.5-bin-hadoop3.tgz
 RUN mkdir -p ${SPARK_HOME} \
-    && curl https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz -o spark-${SPARK_VERSION}-bin-hadoop3.tgz \
-    && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.tgz --directory ${SPARK_HOME} --strip-components 1 \
-    && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.tgz
+    && curl https://dlcdn.apache.org/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz -o kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz \
+    && tar xvzf kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz --directory ${KAFKA_HOME} --strip-components 1 \
+    && rm -rf kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz
 
 # Add spark binaries to shell and enable execution
-RUN chmod u+x /opt/spark/sbin/* && \
-    chmod u+x /opt/spark/bin/*
-ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
+RUN chmod u+x ${KAFKA_HOME}/bin/*
+ENV PATH="$PATH:$KAFKA_HOME/bin"
 
 # Add a spark config for all nodes
-COPY spark-config/* "$SPARK_HOME/conf/"
+COPY kafka-config/* "$KAFKA_HOME/config/"
 
 
 FROM spark-base AS pyspark
