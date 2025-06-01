@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pyspark.sql.functions import explode, split, trim, lower
 from pyspark.sql import SparkSession, DataFrame
 from pyspark import SparkConf
@@ -114,7 +116,7 @@ class StreamWordCount:
         self,
         sdf: DataFrame,
         format: str,
-        output_mode: str,
+        output_mode: Literal["update", "complete", "append"],
         table_name: str,
         checkpoint_location: str
     ):
@@ -165,7 +167,7 @@ if __name__ == "__main__":
         format="delta",
         output_mode="complete",
         table_name="streaming_word_count_table",
-        checkpoint_location="/opt/spark/datasets/checkpoint/word_count"
+        checkpoint_location="/opt/spark/spark-checkpoint/word_count"
     )
     spark.read.table("streaming_word_count_table").show()
 

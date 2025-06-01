@@ -44,12 +44,26 @@ class InvoiceBronze:
                          from_json(df.value.cast("string"), schema).alias("value"),
                          "topic", "timestamp")
 
+    def upsert(self, df: DataFrame, batch_id):
+        df.createOrReplaceTempView("df_temp_view")
+        merge_statment = """
+            MERGE INTO invoice_bronze AS s
+            USING df_temp_view AS t
+            ON s.value == t.value AND s.timestamp == t.timestamp
+            WHEN MATCHED THEN
+                UPDATE SET *
+            WHEN NOT MATCHED THEN
+                INSERT *
+        """
+        df._jdf.sparkSession().sql(merge_statment)
+
     def write_stream_query(self, df: DataFrame, query_name: str, checkpoint_location: str, output_mode: Literal["update", "complete", "append"], table: str) -> StreamingQuery:
         return (df.writeStream
                 .queryName(query_name)
+                .foreachBatch(self.upsert)
                 .option("checkpointLocation", checkpoint_location)
                 .outputMode(output_mode)
-                .toTable(table))
+                .start())
 
 
 if __name__ == "__main__":

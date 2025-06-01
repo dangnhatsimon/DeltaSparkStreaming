@@ -17,8 +17,8 @@ RUN apt-get update && \
 ## Download spark and hadoop dependencies and install
 
 # ENV variables
-ENV SPARK_VERSION=3.5.5
-ENV SCALA_VERSION=2.12
+ENV SPARK_VERSION=4.0.0
+ENV SCALA_VERSION=2.13
 
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV SPARK_HOME=${SPARK_HOME:-"/opt/spark"}
@@ -41,9 +41,9 @@ WORKDIR ${SPARK_HOME}
 # see resources: https://dlcdn.apache.org/spark/spark-3.5.5/
 # filename: spark-3.5.5-bin-hadoop3.tgz
 RUN mkdir -p ${SPARK_HOME} \
-    && curl https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz -o spark-${SPARK_VERSION}-bin-hadoop3.tgz \
-    && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.tgz --directory ${SPARK_HOME} --strip-components 1 \
-    && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.tgz
+    && curl https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3-connect.tgz -o spark-${SPARK_VERSION}-bin-hadoop3-connect.tgz \
+    && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3-connect.tgz --directory ${SPARK_HOME} --strip-components 1 \
+    && rm -rf spark-${SPARK_VERSION}-bin-hadoop3-connect.tgz
 
 # Add spark binaries to shell and enable execution
 RUN chmod u+x /opt/spark/sbin/* && \
@@ -67,7 +67,9 @@ FROM pyspark AS pyspark-runner
 #RUN curl https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.9.0/iceberg-spark-runtime-3.5_2.12-1.9.0.jar -Lo /opt/spark/jars/iceberg-spark-runtime-3.5_2.12-1.9.0.jar
 
 # Download delta jars
-RUN curl https://repo1.maven.org/maven2/io/delta/delta-spark_2.12/3.3.1/delta-spark_2.12-3.3.1.jar -Lo /opt/spark/jars/delta-spark_2.12-3.3.1.jar
+RUN curl https://repo1.maven.org/maven2/io/delta/delta-spark_2.13/3.3.2/delta-spark_2.13-3.3.2.jar -Lo /opt/spark/jars/delta-spark_2.13-3.3.2.jar \
+    && curl https://repo1.maven.org/maven2/io/delta/delta-core_2.13/2.4.0/delta-core_2.13-2.4.0.jar -Lo /opt/spark/jars/delta-core_2.13-2.4.0.jar \
+    && curl https://repo1.maven.org/maven2/io/delta/delta-storage/3.3.2/delta-storage-3.3.1.jar -Lo /opt/spark/jars/delta-storage-3.3.2.jar
 
 ## Download hudi jars
 #RUN curl https://repo1.maven.org/maven2/org/apache/hudi/hudi-spark3-bundle_2.12/0.15.0/hudi-spark3-bundle_2.12-0.15.0.jar -Lo /opt/spark/jars/hudi-spark3-bundle_2.12-0.15.0.jar
@@ -82,11 +84,11 @@ RUN curl https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoo
     && curl https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.782/aws-java-sdk-bundle-1.12.782.jar -Lo /opt/spark/jars/aws-java-sdk-bundle-1.12.782.jar
 
 # Download Structure Streaming Spark jars
-RUN curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.5.5/spark-sql-kafka-0-10_2.12-3.5.5.jar -Lo /opt/spark/jars/spark-sql-kafka-0-10_2.12-3.5.5.jar \
-    && curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql_2.12/3.5.5/spark-sql_2.12-3.5.5.jar -Lo /opt/spark/jars/spark-sql_2.12-3.5.5.jar
+RUN curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.13/4.0.0/spark-sql-kafka-0-10_2.13-4.0.0.jar -Lo /opt/spark/jars/spark-sql-kafka-0-10_2.13-4.0.0.jar \
+    && curl https://repo1.maven.org/maven2/org/apache/spark/spark-sql_2.13/4.0.0/spark-sql_2.13-4.0.0.jar -Lo /opt/spark/jars/spark-sql_2.13-4.0.0.jar
 
 # Download metadata platform OpenLineage jars
-RUN curl https://repo1.maven.org/maven2/io/openlineage/openlineage-spark_2.12/1.32.0/openlineage-spark_2.12-1.32.0.jar -Lo /opt/spark/jars/openlineage-spark_2.12-1.32.0.jar
+RUN curl https://repo1.maven.org/maven2/io/openlineage/openlineage-spark_2.13/1.33.0/openlineage-spark_2.13-1.33.0.jar -Lo /opt/spark/jars/openlineage-spark_2.13-1.33.0.jar
 
 COPY entrypoint.sh .
 RUN chmod u+x /opt/spark/entrypoint.sh

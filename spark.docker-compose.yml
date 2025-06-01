@@ -1,0 +1,78 @@
+version: "3"
+
+x-spark-common: &spark-common
+  build:
+    context: .
+    dockerfile: ./Dockerfile
+  volumes:
+    - ./spark-config:/opt/spark/conf
+    - ./jobs:/opt/spark/jobs
+    - ./datasets:/opt/spark/datasets
+    - ./spark-events:/opt/spark/spark-events
+    - ./spark-warehouse:/opt/spark/spark-warehouse
+    - ./spark-checkpoint:/opt/spark/spark-checkpoint
+    - ./spark-state:/opt/spark/spark-state
+  env_file:
+    - .env.spark
+  networks:
+    - delta-streaming
+
+
+services:
+  spark-master:
+    container_name: delta-streaming-spark-master
+    <<: *spark-common
+    entrypoint: ./entrypoint.sh --workload master --master-host delta-streaming-spark-master --master-port 7077 --master-webui-port 8080
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    ports:
+      - '8080:8080' # Spark master Web UI
+      - '7077:7077' # For spark-node-to-spark-node queries
+      - '4040:4040' # Spark worker data
+      - '8889:8889' # Optionaly - Jupyter web UI
+
+  spark-history-server:
+    container_name: delta-streaming-spark-history
+    <<: *spark-common
+    entrypoint: ['./entrypoint.sh', '--workload', 'history']
+    depends_on:
+      - spark-master
+    ports:
+      - '18080:18080'
+
+  spark-worker-1:
+    container_name: delta-streaming-spark-worker-1
+    <<: *spark-common
+    entrypoint: ./entrypoint.sh --workload worker --master-host delta-streaming-spark-master --master-port 7077 --worker-cores 4 --worker-memory 2g --worker-webui-port 8081
+    depends_on:
+      - spark-master
+    ports:
+      - '8081:8081'
+
+  spark-worker-2:
+    container_name: delta-streaming-spark-worker-2
+    <<: *spark-common
+    entrypoint: ./entrypoint.sh --workload worker --master-host delta-streaming-spark-master --master-port 7077 --worker-cores 4 --worker-memory 2g --worker-webui-port 8081
+    depends_on:
+      - spark-master
+    ports:
+      - '8082:8081'
+
+  spark-worker-3:
+    container_name: delta-streaming-spark-worker-3
+    <<: *spark-common
+    entrypoint: ./entrypoint.sh --workload worker --master-host delta-streaming-spark-master --master-port 7077 --worker-cores 4 --worker-memory 2g --worker-webui-port 8081
+    depends_on:
+      - spark-master
+    ports:
+      - '8083:8081'
+
+volumes:
+  spark-events:
+
+networks:
+  delta-streaming:
+    driver: bridge

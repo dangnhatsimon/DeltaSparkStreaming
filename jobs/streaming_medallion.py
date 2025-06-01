@@ -29,7 +29,7 @@ class InvoiceStreamBronze:
         format: str,
         path: Union[str, Path],
         schema: Union[str, Any],
-        clean_source: Literal["delete", "archive"],
+        clean_source: Literal["delete", "archive", "off"],
         archive_dir: Optional[str],
     ) -> DataFrame:
         if isinstance(path, str):
@@ -56,7 +56,7 @@ class InvoiceStreamBronze:
         df: DataFrame,
         format: str,
         checkpoint_location: str,
-        output_mode: str,
+        output_mode: Literal["update", "complete", "append"],
         table: str,
         query_name: str
     ):
@@ -115,7 +115,7 @@ class InvoiceStreamSilver:
         df: DataFrame,
         format: str,
         checkpoint_location: str,
-        output_mode: str,
+        output_mode: Literal["update", "complete", "append"],
         table: str,
         query_name: str,
     ):
@@ -176,12 +176,12 @@ if __name__ == "__main__":
         path="/opt/spark/datasets/invoices/*.json",
         schema=schema,
         clean_source="archive",
-        archive_dir="/opt/spark/datasets/archive/invoices"
+        archive_dir="/opt/spark/spark-archive/invoices"
     )
     squery_bronze = invoices_bronze.write_invoices(
         df=invoices_df,
         format="delta",
-        checkpoint_location="/opt/spark/datasets/checkpoint/invoices/bronze",
+        checkpoint_location="/opt/spark/spark-checkpoint/invoices/bronze",
         output_mode="append",
         table="invoices_bronze",
         query_name="ingestion_bronze"
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     squery_silver = invoices_silver.write_invoices(
         df=flatten_df,
         format="delta",
-        checkpoint_location="/opt/spark/datasets/checkpoint/invoices/silver",
+        checkpoint_location="/opt/spark/spark-checkpoint/invoices/silver",
         output_mode="append",
         table="invoices_silver",
         query_name="ingestion_silver",

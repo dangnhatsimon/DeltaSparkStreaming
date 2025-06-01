@@ -7,7 +7,7 @@ from os.path import abspath
 from pathlib import Path
 import shutil
 from pathlib import Path
-from typing import Optional, Union, List, Tuple, Any
+from typing import Optional, Union, List, Tuple, Any, Literal
 
 
 logging.basicConfig(
@@ -69,7 +69,7 @@ class InvoiceStreamBatch:
         df: DataFrame,
         format: str,
         checkpoint_location: str,
-        output_mode: str,
+        output_mode: Literal["update", "complete", "append"],
         table: str,
         trigger: str,
         max_files_per_trigger: int = 1
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     squery = invoices_stream.write_invoices(
         df=flatten_df,
         format="delta",
-        checkpoint_location="/opt/spark/datasets/checkpoint/invoices",
+        checkpoint_location="/opt/spark/spark-checkpoint/invoices",
         output_mode="append",
         table=table_name,
         trigger="batch"
