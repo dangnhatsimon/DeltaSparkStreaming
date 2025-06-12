@@ -81,9 +81,9 @@ class Bronze:
                 f"{self.catalog}.{self.db_name}.gym_logins_bz")
 
     def consume_kafka_multiplex(
-            self,
-            once: bool = True,
-            processing_time: str = "5 seconds",
+        self,
+        once: bool = True,
+        processing_time: str = "5 seconds",
     ):
         schema = "key string, value string, topic string, partition bigint, offset bigint, timestamp bigint"
         df_date_lookup = self.spark.table(f"{self.catalog}.{self.db_name}.date_lookup").select("date", "week_part")
@@ -118,27 +118,14 @@ class Bronze:
             return writer.trigger(processingTime=processing_time).toTable(
                 f"{self.catalog}.{self.db_name}.kafka_multiplex_bz")
 
-
-if __name__ == "__main__":
-    spark = (
-        SparkSession.builder
-        .appName("GymWorkoutBronze")
-        .enableHiveSupport()
-        .getOrCreate()
-    )
-
-    bronze = Bronze(spark, "dev")
-    bronze.consume_user_registration(
-        once=True,
-        processing_time="5 seconds"
-    )
-    bronze.consume_gym_logins(
-        once=True,
-        processing_time="5 seconds"
-    )
-    bronze.consume_kafka_multiplex(
-        once=True,
-        processing_time="5 seconds"
-    )
-    for stream in spark.streams.active:
-        stream.awaitTermination()
+    def consume(
+        self,
+        once: bool = True,
+        processing_time: str = "5 seconds",
+    ):
+        self.consume_user_registration(once, processing_time)
+        self.consume_gym_logins(once, processing_time)
+        self.consume_kafka_multiplex(once, processing_time)
+        if once:
+            for stream in self.spark.streams.active:
+                stream.awaitTermination()

@@ -226,7 +226,7 @@ class SetupHelper:
     def create_gym_summary(self):
         if self.initialized:
             self.spark.sql(f"""
-                CREATE OR REPLACE VIEW  {self.catalog}.{self.db_name}.gym_summary AS(
+                CREATE OR REPLACE VIEW {self.catalog}.{self.db_name}.gym_summary AS(
                     SELECT
                         to_date(login::timestamp) date,
                         gym,
@@ -251,27 +251,19 @@ class SetupHelper:
         else:
             raise ReferenceError("Application database is not defined. Cannot create table in default database.")
 
-
-if __name__ == "__main__":
-    spark = (
-        SparkSession.builder
-        .appName("GymWorkoutSetup")
-        .enableHiveSupport()
-        .getOrCreate()
-    )
-    setup = SetupHelper(spark, "dev")
-    setup.create_db()
-    setup.create_registered_users_bronze()
-    setup.create_gym_logins_bz()
-    setup.create_kafka_multiplex_bz()
-    setup.create_users()
-    setup.create_gym_logs()
-    setup.create_user_profile()
-    setup.create_heart_rate()
-    setup.create_workouts()
-    setup.create_completed_workouts()
-    setup.create_workout_bpm()
-    setup.create_user_bins()
-    setup.create_date_lookup()
-    setup.create_workout_bpm_summary()
-    setup.create_gym_summary()
+    def setup(self):
+        self.create_db()
+        self.create_registered_users_bronze()
+        self.create_gym_logins_bz()
+        self.create_kafka_multiplex_bz()
+        self.create_users()
+        self.create_gym_logs()
+        self.create_user_profile()
+        self.create_heart_rate()
+        self.create_workouts()
+        self.create_completed_workouts()
+        self.create_workout_bpm()
+        self.create_user_bins()
+        self.create_date_lookup()
+        self.create_workout_bpm_summary()
+        self.create_gym_summary()

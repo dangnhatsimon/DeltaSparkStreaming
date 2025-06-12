@@ -74,7 +74,7 @@ class Silver:
         #      - The recomended maxFilesPerTrigger is equal to #executors assuming auto optimize file size to 128 MB
 
         df = (
-            spark.readStream
+            self.spark.readStream
             .option("startingVersion", startingVersion)
             .option("ignoreDeletes", True)
             # .option("withEventTimeOrder", "true")
@@ -96,7 +96,7 @@ class Silver:
             .queryName("users_upsert_stream")
         )
 
-        spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p2")
+        self.spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p2")
 
         if once:
             return stream_writer.trigger(availableNow=True).start()
@@ -120,7 +120,7 @@ class Silver:
 
         data_upserter = Upserter(query, "gym_logs_delta")
 
-        df_delta = (spark.readStream
+        df_delta = (self.spark.readStream
                     .option("startingVersion", startingVersion)
                     .option("ignoreDeletes", True)
                     # .option("withEventTimeOrder", "true")
@@ -139,7 +139,7 @@ class Silver:
             .queryName("gym_logs_upsert_stream")
         )
 
-        spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p3")
+        self.spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p3")
 
         if once:
             return stream_writer.trigger(availableNow=True).start()
@@ -172,7 +172,7 @@ class Silver:
         data_upserter = CDCUpserter(query, "user_profile_cdc", "user_id", "updated")
 
         df_cdc = (
-            spark.readStream
+            self.spark.readStream
             .option("startingVersion", startingVersion)
             .option("ignoreDeletes", True)
             # .option("withEventTimeOrder", "true")
@@ -199,7 +199,7 @@ class Silver:
             .queryName("user_profile_stream")
         )
 
-        spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p3")
+        self.spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p3")
 
         if once:
             return stream_writer.trigger(availableNow=True).start()
@@ -220,7 +220,7 @@ class Silver:
         data_upserter = Upserter(query, "workouts_delta")
 
         df_delta = (
-            spark.readStream
+            self.spark.readStream
             .option("startingVersion", startingVersion)
             .option("ignoreDeletes", True)
             # .option("withEventTimeOrder", "true")
@@ -246,7 +246,7 @@ class Silver:
             .queryName("workouts_upsert_stream")
         )
 
-        spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p3")
+        self.spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p3")
 
         if once:
             return stream_writer.trigger(availableNow=True).start()
@@ -267,7 +267,7 @@ class Silver:
         data_upserter = Upserter(query, "heart_rate_delta")
 
         df_delta = (
-            spark.readStream
+            self.spark.readStream
             .option("startingVersion", startingVersion)
             .option("ignoreDeletes", True)
             # .option("withEventTimeOrder", "true")
@@ -288,7 +288,7 @@ class Silver:
             .queryName("heart_rate_upsert_stream")
         )
 
-        spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p2")
+        self.spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p2")
 
         if once:
             return stream_writer.trigger(availableNow=True).start()
@@ -325,12 +325,12 @@ class Silver:
 
         data_upserter = Upserter(query, "user_bins_delta")
 
-        df_user = spark.table(f"{self.catalog}.{self.db_name}.users").select("user_id")
+        df_user = self.spark.table(f"{self.catalog}.{self.db_name}.users").select("user_id")
 
         # Running stream on silver table requires ignoreChanges
         # No watermark required - Stream to staic join is stateless
         df_delta = (
-            spark.readStream
+            self.spark.readStream
             .option("startingVersion", startingVersion)
             .option("ignoreChanges", True)
             # .option("withEventTimeOrder", "true")
@@ -348,7 +348,7 @@ class Silver:
             .queryName("user_bins_upsert_stream")
         )
 
-        spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p3")
+        self.spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p3")
 
         if once:
             return stream_writer.trigger(availableNow=True).start()
@@ -369,7 +369,7 @@ class Silver:
         data_upserter = Upserter(query, "completed_workouts_delta")
 
         df_start = (
-            spark.readStream
+            self.spark.readStream
             .option("startingVersion", startingVersion)
             .option("ignoreDeletes", True)
             # .option("withEventTimeOrder", "true")
@@ -382,7 +382,7 @@ class Silver:
         )
 
         df_stop = (
-            spark.readStream
+            self.spark.readStream
             .option("startingVersion", startingVersion)
             .option("ignoreDeletes", True)
             # .option("withEventTimeOrder", "true")
@@ -417,7 +417,7 @@ class Silver:
             .queryName("completed_workouts_upsert_stream")
         )
 
-        spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p1")
+        self.spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p1")
 
         if once:
             return stream_writer.trigger(availableNow=True).start()
@@ -436,10 +436,10 @@ class Silver:
 
         data_upserter = Upserter(query, "workout_bpm_delta")
 
-        df_users = spark.read.table("users")
+        df_users = self.spark.read.table("users")
 
         df_completed_workouts = (
-            spark.readStream
+            self.spark.readStream
             .option("startingVersion", startingVersion)
             .option("ignoreDeletes", True)
             # .option("withEventTimeOrder", "true")
@@ -451,7 +451,7 @@ class Silver:
         )
 
         df_bpm = (
-            spark.readStream
+            self.spark.readStream
             .option("startingVersion", startingVersion)
             .option("ignoreDeletes", True)
             # .option("withEventTimeOrder", "true")
@@ -484,62 +484,32 @@ class Silver:
             .queryName("workout_bpm_upsert_stream")
         )
 
-        spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p2")
+        self.spark.sparkContext.setLocalProperty("spark.scheduler.pool", "silver_p2")
 
         if once:
             return stream_writer.trigger(availableNow=True).start()
         else:
             return stream_writer.trigger(processingTime=processing_time).start()
 
-    def await_queries(self):
-        for stream in self.spark.streams.active:
-            stream.awaitTermination()
+    def await_queries(self, once):
+        if once:
+            for stream in self.spark.streams.active:
+                stream.awaitTermination()
 
-
-if __name__ == "__main__":
-    spark = (
-        SparkSession.builder
-        .appName("GymWorkoutSilver")
-        .enableHiveSupport()
-        .getOrCreate()
-    )
-
-    silver = Silver(spark, "dev")
-    silver.upsert_users(
-        once=True,
-        processing_time="5 seconds"
-    )
-    silver.upsert_gym_logs(
-        once=True,
-        processing_time="5 seconds"
-    )
-    silver.upsert_user_profile(
-        once=True,
-        processing_time="5 seconds"
-    )
-    silver.upsert_workouts(
-        once=True,
-        processing_time="5 seconds"
-    )
-    silver.upsert_heart_rate(
-        once=True,
-        processing_time="5 seconds"
-    )
-    silver.await_queries()
-
-    silver.upsert_user_bins(
-        once=True,
-        processing_time="5 seconds"
-    )
-    silver.upsert_completed_workouts(
-        once=True,
-        processing_time="5 seconds"
-    )
-    silver.await_queries()
-
-    silver.upsert_workout_bpm(
-        once=True,
-        processing_time="5 seconds"
-    )
-    silver.await_queries()
+    def upsert(
+        self,
+        once: bool = True,
+        processing_time: str = "5 seconds"
+    ):
+        self.upsert_users(once, processing_time)
+        self.upsert_gym_logs(once, processing_time)
+        self.upsert_user_profile(once, processing_time)
+        self.upsert_workouts(once, processing_time)
+        self.upsert_heart_rate(once, processing_time)
+        self.await_queries(once)
+        self.upsert_user_bins(once, processing_time)
+        self.upsert_completed_workouts(once, processing_time)
+        self.await_queries(once)
+        self.upsert_workout_bpm(once, processing_time)
+        self.await_queries(once)
 

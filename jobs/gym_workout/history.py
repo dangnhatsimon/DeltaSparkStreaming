@@ -20,13 +20,6 @@ class HistoryLoader:
             )
         """)
 
+    def load_history(self):
+        self.load_date_lookup()
 
-if __name__ == "__main__":
-    spark = (
-        SparkSession.builder
-        .appName("GymWorkoutHistory")
-        .enableHiveSupport()
-        .getOrCreate()
-    )
-    setup = HistoryLoader(spark, "dev")
-    setup.load_date_lookup()
