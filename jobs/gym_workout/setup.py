@@ -1,13 +1,14 @@
 import time
 
 from pyspark.sql.connect.session import SparkSession
+from config import Config
 # %run ./config.ipynb
 
 
 class SetupHelper:
     def __init__(self, spark: SparkSession, env: str):
         self.spark = spark
-        self.conf = Config(spark)
+        self.conf = Config(self.spark)
         self.landing_zone = self.conf.base_dir_data + "/raw"
         self.checkpoint_base = self.conf.base_dir_checkpoint + "/checkpoint"
         self.catalog = env

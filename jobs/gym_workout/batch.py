@@ -73,6 +73,7 @@
 from pyspark.sql.connect.session import SparkSession
 from setup import SetupHelper
 from history import HistoryLoader
+from producer import Producer
 from bronze import Bronze
 from silver import Silver
 from gold import Gold
@@ -91,3 +92,12 @@ if __name__ == "__main__":
 
     sh = SetupHelper(spark, env)
     hl = HistoryLoader(spark, env)
+    pr = Producer(spark)
+
+    pr.produce(1)
+
+    bronze = Bronze(spark, env)
+    silver = Silver(spark, env)
+    gold = Gold(spark, env)
+
+    pr.produce(2)

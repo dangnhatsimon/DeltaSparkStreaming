@@ -1,6 +1,7 @@
 import time
 from pyspark.sql.connect.session import SparkSession
 from pyspark.sql.functions import current_timestamp, input_file_name, broadcast, to_date, col, min, max, avg, mean, count
+from config import Config
 
 
 class Upserter:
@@ -16,7 +17,7 @@ class Upserter:
 class Gold:
     def __init__(self, spark: SparkSession, env: str):
         self.spark = spark
-        self.Conf = Config()
+        self.Conf = Config(self.spark)
         self.test_data_dir = self.Conf.base_dir_data + "/test_data"
         self.checkpoint_base = self.Conf.base_dir_checkpoint + "/checkpoints"
         self.catalog = env

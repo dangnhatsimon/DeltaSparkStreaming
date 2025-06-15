@@ -2,12 +2,13 @@ import time
 
 from pyspark.sql.connect.session import SparkSession
 from pyspark.sql.functions import current_timestamp, input_file_name, broadcast, to_date, col
+from config import Config
 
 
 class Bronze:
     def __init__(self, spark: SparkSession, env: str):
         self.spark = spark
-        self.conf = Config(spark)
+        self.conf = Config(self.spark)
         self.landing_zone = self.conf.base_dir_data + "/raw"
         self.checkpoint_base = self.conf.base_dir_checkpoint + "/checkpoint"
         self.catalog = env

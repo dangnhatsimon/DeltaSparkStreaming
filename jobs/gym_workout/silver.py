@@ -3,6 +3,7 @@ from pyspark.sql import DataFrame
 from pyspark.sql.connect.session import SparkSession
 from pyspark.sql.functions import current_timestamp, input_file_name, broadcast, to_date, col, rank, from_json, expr, when, floor, months_between, current_date
 from pyspark.sql.window import Window
+from config import Config
 
 
 class Upserter:
@@ -45,7 +46,7 @@ class CDCUpserter:
 class Silver:
     def __init__(self, spark: SparkSession, env: str):
         self.spark = spark
-        self.conf = Config(spark)
+        self.conf = Config(self.spark)
         self.checkpoint_base = self.conf.base_dir_checkpoint + "/checkpoint"
         self.catalog = env
         self.db_name = self.conf.db_name
